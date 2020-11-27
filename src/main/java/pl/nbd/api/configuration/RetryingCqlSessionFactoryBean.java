@@ -1,11 +1,18 @@
 package pl.nbd.api.configuration;
 
 import lombok.SneakyThrows;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.cassandra.config.CqlSessionFactoryBean;
 
 import java.text.MessageFormat;
 
 public class RetryingCqlSessionFactoryBean extends CqlSessionFactoryBean {
+
+    @Value("${cassandra.max-reconnection-attempts}")
+    int maxAttempts = 10;
+
+    @Value("${cassandra.reconnection-timeout-milliseconds}")
+    long attemptTimeout = 5000;
 
     @SneakyThrows
     @Override
@@ -14,9 +21,6 @@ public class RetryingCqlSessionFactoryBean extends CqlSessionFactoryBean {
     }
 
     protected void connect() throws InterruptedException {
-        int maxAttempts = 10;
-        long attemptTimeout = 10000;
-
         for (int attempt = 1; attempt <= maxAttempts; attempt++) {
             try {
                 super.afterPropertiesSet();
