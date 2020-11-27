@@ -1,0 +1,16 @@
+version: "3.8"
+
+services:
+  api:
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - "cassandra"
+
+  cassandra:
+    image: cassandra:4.0
+    ports:
+      - "9042:9042"
