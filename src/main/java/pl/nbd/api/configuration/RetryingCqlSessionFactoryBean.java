@@ -8,11 +8,11 @@ import java.text.MessageFormat;
 
 public class RetryingCqlSessionFactoryBean extends CqlSessionFactoryBean {
 
-    @Value("${cassandra.max-reconnection-attempts}")
-    int maxAttempts = 10;
+    @Value("${cassandra.connect.attempts:10}")
+    private int attempts;
 
-    @Value("${cassandra.reconnection-timeout-milliseconds}")
-    long attemptTimeout = 5000;
+    @Value("${cassandra.connect.attempt-timeout-ms:5000}")
+    private long attemptTimeout;
 
     @SneakyThrows
     @Override
@@ -20,8 +20,8 @@ public class RetryingCqlSessionFactoryBean extends CqlSessionFactoryBean {
         connect();
     }
 
-    protected void connect() throws InterruptedException {
-        for (int attempt = 1; attempt <= maxAttempts; attempt++) {
+    private void connect() throws InterruptedException {
+        for (int attempt = 1; attempt <= attempts; attempt++) {
             try {
                 super.afterPropertiesSet();
                 return;
@@ -35,7 +35,7 @@ public class RetryingCqlSessionFactoryBean extends CqlSessionFactoryBean {
 
                 logger.error(MessageFormat
                         .format("Try {0} of {1} failed. Retrying in {2} milliseconds",
-                                attempt, maxAttempts, attemptTimeout));
+                                attempt, attempts, attemptTimeout));
                 Thread.sleep(attemptTimeout);
             }
         }

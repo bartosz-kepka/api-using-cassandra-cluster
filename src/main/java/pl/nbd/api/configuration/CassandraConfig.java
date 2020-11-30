@@ -1,7 +1,7 @@
 package pl.nbd.api.configuration;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.cassandra.CassandraProperties;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.cassandra.config.AbstractCassandraConfiguration;
 import org.springframework.data.cassandra.config.CqlSessionFactoryBean;
@@ -17,47 +17,48 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CassandraConfig extends AbstractCassandraConfiguration {
 
-    private final CassandraProperties cassandraProperties;
+    @Value("${cassandra.local-datacenter:datacenter1}")
+    private String localDatacenter;
+
+    @Value("${cassandra.contact-points:localhost}")
+    private String contactPoints;
+
+    @Value("${cassandra.port:9042}")
+    private int port;
+
+    @Value("${cassandra.keyspace-name:wine_reviews}")
+    private String keyspaceName;
+
+    @Value("${cassandra.schema-action:CREATE_IF_NOT_EXISTS}")
+    private String schemaAction;
 
     @NonNull
     @Override
     protected String getLocalDataCenter() {
-        return cassandraProperties.getLocalDatacenter();
+        return localDatacenter;
     }
 
     @NonNull
     @Override
     protected String getContactPoints() {
-        return cassandraProperties.getContactPoints().get(0);
+        return contactPoints;
+    }
+
+    @Override
+    protected int getPort() {
+        return port;
     }
 
     @NonNull
     @Override
     protected String getKeyspaceName() {
-        return cassandraProperties.getKeyspaceName();
+        return keyspaceName;
     }
 
     @NonNull
     @Override
     public SchemaAction getSchemaAction() {
-        return SchemaAction.valueOf(cassandraProperties.getSchemaAction());
-    }
-
-    @NonNull
-    @Override
-    public CqlSessionFactoryBean cassandraSession() {
-        RetryingCqlSessionFactoryBean bean = new RetryingCqlSessionFactoryBean();
-
-        bean.setContactPoints(getContactPoints());
-        bean.setKeyspaceCreations(getKeyspaceCreations());
-        bean.setKeyspaceDrops(getKeyspaceDrops());
-        bean.setKeyspaceName(getKeyspaceName());
-        bean.setKeyspaceStartupScripts(getStartupScripts());
-        bean.setKeyspaceShutdownScripts(getShutdownScripts());
-        bean.setLocalDatacenter(getLocalDataCenter());
-        bean.setPort(getPort());
-
-        return bean;
+        return SchemaAction.valueOf(schemaAction);
     }
 
     @NonNull
@@ -74,5 +75,21 @@ public class CassandraConfig extends AbstractCassandraConfiguration {
     @Override
     public String[] getEntityBasePackages() {
         return new String[]{"pl.nbd.api.model"};
+    }
+
+    @NonNull
+    @Override
+    public CqlSessionFactoryBean cassandraSession() {
+        RetryingCqlSessionFactoryBean bean = new RetryingCqlSessionFactoryBean();
+        bean.setContactPoints(getContactPoints());
+        bean.setKeyspaceCreations(getKeyspaceCreations());
+        bean.setKeyspaceDrops(getKeyspaceDrops());
+        bean.setKeyspaceName(getKeyspaceName());
+        bean.setKeyspaceStartupScripts(getStartupScripts());
+        bean.setKeyspaceShutdownScripts(getShutdownScripts());
+        bean.setLocalDatacenter(getLocalDataCenter());
+        bean.setPort(getPort());
+
+        return bean;
     }
 }

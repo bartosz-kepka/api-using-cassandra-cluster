@@ -2,19 +2,20 @@
 
 Server at localhost:8080
 
-# Run (preferred method)
+# Run with docker (preferred method)
 ## While being in project root directory (parent of src directory):
 ```
 gradle clean build
 docker-compose up --build
 ```
+Database files are auto mounted in ./data. Delete this directory to clear database.
 
 
 # Run images separately
 ## Cassandra
 Run cassandra container (where [cassandraContainer] is a name for the container, e.g. cassandra):
 ```
- docker run -p 9042:9042 --name [cassandraContainer] cassandra:4.0
+ docker run -p 9042:9042 -v ./data:/var/lib/cassandra --name [cassandraContainer] cassandra:4.0
 ```
 To open cqlsh:
 ```
