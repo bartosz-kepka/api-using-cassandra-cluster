@@ -10,8 +10,10 @@ Docs: localhost:8080/api/swagger-ui/#/
 gradle clean build
 docker-compose up --build
 ```
-Database files are auto mounted in ./data. Delete this directory to clear database.
-
+To fill database with data:
+```
+python fill.py [noOfRecords]
+```
 
 # Run images separately
 ## Cassandra
