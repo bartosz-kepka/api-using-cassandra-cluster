@@ -14,5 +14,3 @@ services:
     image: cassandra:4.0
     ports:
       - "9042:9042"
-    volumes:
-      - ./data:/var/lib/cassandra

@@ -1,6 +1,8 @@
 # Nierelacyjne bazy danych - Wine Reviews API
 
-Server at localhost:8080
+Api: localhost:8080/api/
+
+Docs: localhost:8080/api/swagger-ui/#/
 
 # Run with docker (preferred method)
 ## While being in project root directory (parent of src directory):
