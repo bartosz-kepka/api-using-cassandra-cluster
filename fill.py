@@ -5,15 +5,24 @@ import sys
 
 def main():
     file = 'data.csv'
-    url = 'http://localhost:8080/api/reviews/'
+    url = 'http://{}:8080/api/reviews/'
     saved = 0
     to_save: int
+    ip: string
 
     try:
-        to_save = int(sys.argv[1])
+        ip = sys.argv[1]
+    except:
+        print('Missing or invalid ip address. Localhost will be used.')
+        ip = 'localhost'
+
+    try:
+        to_save = int(sys.argv[2])
     except:
         print('Missing or invalid argument. 10000 reviews will be saved')
         to_save = 10000
+
+    url = url.format(ip)
 
     with open(file, newline='') as csv_file:
         csv_reader = csv.reader(csv_file)

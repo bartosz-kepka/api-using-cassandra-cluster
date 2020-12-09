@@ -6,7 +6,7 @@ import org.springframework.data.cassandra.config.CqlSessionFactoryBean;
 
 import java.text.MessageFormat;
 
-public class RetryingCqlSessionFactoryBean extends CqlSessionFactoryBean {
+public class CustomCqlSessionFactoryBean extends CqlSessionFactoryBean {
 
     @Value("${cassandra.connect.attempts:10}")
     private int attempts;
@@ -28,7 +28,7 @@ public class RetryingCqlSessionFactoryBean extends CqlSessionFactoryBean {
             } catch (Exception e) {
                 logger.error(e.getMessage());
 
-                if (attempt == 5) {
+                if (attempt == attempts) {
                     logger.error("Could not connect to cassandra. Closing application");
                     return;
                 }
@@ -40,4 +40,5 @@ public class RetryingCqlSessionFactoryBean extends CqlSessionFactoryBean {
             }
         }
     }
+
 }

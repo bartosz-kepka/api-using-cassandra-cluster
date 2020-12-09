@@ -1,0 +1,19 @@
+#!/bin/bash
+
+echo '---logging to azure docker registry---'
+echo 'DEFAULT BROWSER WILL BE OPENED TO LOGIN TO AZURE'
+docker login azure
+
+echo '---creating azure resource group---'
+az group create --name westeurope --location westeurope
+
+echo '---creating azure container registry---'
+az acr create --resource-group westeurope --name reviews --sku Basic
+
+echo '---creating docker context for azure---'
+docker context create aci azure --resource-group westeurope
+
+echo '---logging to azure container registry---'
+az acr login --name reviews
+
+

@@ -80,7 +80,7 @@ public class CassandraConfig extends AbstractCassandraConfiguration {
     @NonNull
     @Override
     public CqlSessionFactoryBean cassandraSession() {
-        RetryingCqlSessionFactoryBean bean = new RetryingCqlSessionFactoryBean();
+        CustomCqlSessionFactoryBean bean = new CustomCqlSessionFactoryBean();
         bean.setContactPoints(getContactPoints());
         bean.setKeyspaceCreations(getKeyspaceCreations());
         bean.setKeyspaceDrops(getKeyspaceDrops());

@@ -8,8 +8,6 @@ import org.springframework.data.cassandra.core.mapping.PrimaryKey;
 import org.springframework.data.cassandra.core.mapping.Table;
 
 import javax.validation.constraints.*;
-import java.math.BigDecimal;
-import java.math.BigInteger;
 
 @Data
 @NoArgsConstructor
@@ -53,7 +51,7 @@ public class Review {
             message = "Price cannot have more than 2 fractional and 5 integral digits")
     @ApiModelProperty(notes = "The cost for a bottle of the wine",
             example = "49.99")
-    private BigDecimal price;
+    private Float price;
 
     @NotBlank(message = "Description is required and cannot be blank")
     @ApiModelProperty(notes = "A few sentences from a sommelier describing the wine's taste, smell, look, feel, etc.",
@@ -65,5 +63,5 @@ public class Review {
     @Max(value = 100, message = "Points must be lower or equal to 100")
     @ApiModelProperty(notes = "The number of points sommelier rated the wine on a scale of 1-100",
             allowableValues = "range[1, 100]", required = true)
-    private BigInteger points;
+    private Integer points;
 }

@@ -1,0 +1,29 @@
+#!/bin/bash
+
+echo '---switching docker context to azure---'
+docker context use azure
+
+echo '---stop and delete docker containers if any are running---'
+docker compose down
+
+echo '---switching docker context to default---'
+docker context use default
+
+echo '---building api project---'
+gradle clean build
+
+echo '---building docker compose services images---'
+docker-compose build
+
+echo '---pushing images to azure container registry---'
+docker-compose push
+
+echo '---switching docker context to azure---'
+docker context use azure
+
+echo '---running docker services---'
+docker compose up
+
+echo '---showing information about services---'
+docker ps -a
+

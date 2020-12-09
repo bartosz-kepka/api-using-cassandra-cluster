@@ -1,16 +1,25 @@
-version: "3"
+version: '3'
 
 services:
   api:
     build:
       context: ./
       dockerfile: ./Dockerfile
+    image: reviews.azurecr.io/api
     ports:
       - "8080:8080"
     depends_on:
       - "cassandra"
+    restart: on-failure
 
   cassandra:
     image: cassandra:4.0
+    deploy:
+      resources:
+        limits:
+          memory: 8G
+        reservations:
+          memory: 8G
     ports:
       - "9042:9042"
+    restart: on-failure
