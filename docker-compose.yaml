@@ -6,6 +6,12 @@ services:
       context: ./
       dockerfile: ./Dockerfile
     image: reviews.azurecr.io/api
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+        reservations:
+          memory: 2G
     ports:
       - "8080:8080"
     depends_on:
@@ -17,9 +23,9 @@ services:
     deploy:
       resources:
         limits:
-          memory: 8G
+          memory: 7G
         reservations:
-          memory: 8G
+          memory: 7G
     ports:
       - "9042:9042"
     restart: on-failure
