@@ -7,6 +7,7 @@ import org.springframework.data.cassandra.config.AbstractCassandraConfiguration;
 import org.springframework.data.cassandra.config.CqlSessionFactoryBean;
 import org.springframework.data.cassandra.config.SchemaAction;
 import org.springframework.data.cassandra.core.cql.keyspace.CreateKeyspaceSpecification;
+import org.springframework.data.cassandra.core.cql.keyspace.KeyspaceOption;
 import org.springframework.data.cassandra.repository.config.EnableCassandraRepositories;
 import org.springframework.lang.NonNull;
 
@@ -20,17 +21,17 @@ public class CassandraConfig extends AbstractCassandraConfiguration {
     @Value("${cassandra.local-datacenter:datacenter1}")
     private String localDatacenter;
 
-    @Value("${cassandra.contact-points:localhost}")
+    @Value("${cassandra.contact-points:localhost:9042}")
     private String contactPoints;
-
-    @Value("${cassandra.port:9042}")
-    private int port;
 
     @Value("${cassandra.keyspace-name:wine_reviews}")
     private String keyspaceName;
 
     @Value("${cassandra.schema-action:CREATE_IF_NOT_EXISTS}")
     private String schemaAction;
+
+    @Value("${cassandra.replication-factor:1}")
+    private int replicationFactor;
 
     @NonNull
     @Override
@@ -42,11 +43,6 @@ public class CassandraConfig extends AbstractCassandraConfiguration {
     @Override
     protected String getContactPoints() {
         return contactPoints;
-    }
-
-    @Override
-    protected int getPort() {
-        return port;
     }
 
     @NonNull
@@ -67,7 +63,8 @@ public class CassandraConfig extends AbstractCassandraConfiguration {
         final CreateKeyspaceSpecification specification =
                 CreateKeyspaceSpecification.createKeyspace(getKeyspaceName())
                         .ifNotExists()
-                        .withSimpleReplication();
+                        .with(KeyspaceOption.REPLICATION)
+                        .withSimpleReplication(replicationFactor);
         return List.of(specification);
     }
 

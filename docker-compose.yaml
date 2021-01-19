@@ -6,26 +6,51 @@ services:
       context: ./
       dockerfile: ./Dockerfile
     image: reviews.azurecr.io/api
-    deploy:
-      resources:
-        limits:
-          memory: 2G
-        reservations:
-          memory: 2G
     ports:
       - "8080:8080"
     depends_on:
-      - "cassandra"
+      cassandra2:
+        condition: service_healthy
     restart: on-failure
 
   cassandra:
     image: cassandra:4.0
-    deploy:
-      resources:
-        limits:
-          memory: 7G
-        reservations:
-          memory: 7G
+    environment: &cassandra-env
+      CASSANDRA_SEEDS: cassandra
+      CASSANDRA_CLUSTER_NAME: cassandracluster
+      CASSANDRA_DC: datacenter1
+      CASSANDRA_ENDPOINT_SNITCH: GossipingPropertyFileSnitch
+      HEAP_NEWSIZE: 1024M
+      MAX_HEAP_SIZE: 1024M
+    healthcheck: &cassandra-healthcheck
+      test: [ "CMD", "cqlsh", "-e", "desc keyspaces" ]
+      interval: 10s
+      timeout: 10s
+      retries: 30
     ports:
       - "9042:9042"
     restart: on-failure
+
+  cassandra1:
+    image: cassandra:4.0
+    environment: *cassandra-env
+    healthcheck: *cassandra-healthcheck
+    restart: on-failure
+    ports:
+      - "9043:9042"
+    depends_on:
+      cassandra:
+        condition: service_healthy
+
+  cassandra2:
+    image: cassandra:4.0
+    environment: *cassandra-env
+    healthcheck: *cassandra-healthcheck
+    restart: on-failure
+    ports:
+      - "9044:9042"
+    depends_on:
+      cassandra1:
+        condition: service_healthy
+
+
